@@ -20,12 +20,12 @@ Please update .gitignore in case you or your IDE creates some unwanted folders/c
 
 ## Pending tasks
 
---[ ] Blockchain backend
-    -- [ ] broadcast_transaction in chain.py
-    -- [ ] broadcast_block in chain.py
-    -- [ ] resolve_conflicts in chain.py
---[ ] Buy credits page
---[ ] Create credits page
---[ ] Authentication
---[ ] Download certificate page
---[ ] Verify digital signature page
+- [ ] Blockchain backend
+  - [ ] broadcast_transaction in chain.py
+  - [ ] broadcast_block in chain.py
+  - [ ] resolve_conflicts in chain.py
+- [ ] Buy credits page
+- [ ] Create credits page
+- [ ] Authentication
+- [ ] Download certificate page
+- [ ] Verify digital signature page
