@@ -1,10 +1,10 @@
 from transaction import *
-from wallet import *
-BLOCK_INCENTIVE = 25 # The number of coins miners get for mining a block
+# from wallet import *
+BLOCK_INCENTIVE = 2 # The number of coins miners get for mining a block
 DIFFICULTY = 2
 
 
-def mine(message, difficulty=1):
+def mint(message, difficulty=1):
     #TODO CHANGE TO MINING BASED ON STAKE 
     """
     Given an input string, will return a nonce such that
@@ -14,22 +14,23 @@ def mine(message, difficulty=1):
         nonce: The found nonce
         niters: The number of iterations required to find the nonce
     """
-    assert difficulty >= 1, "Difficulty of 0 is not possible"
-    i = 0
-    prefix = '1' * difficulty
-    while True:
-        nonce = str(i)
-        digest = Transaction.sha256_hash(message + nonce)
-        if digest.startswith(prefix):
-            return nonce, i
-        i += 1
+    # assert difficulty >= 1, "Difficulty of 0 is not possible"
+    # i = 0
+    # prefix = '1' * difficulty
+    # while True:
+    #     nonce = str(i)
+    #     digest = Transaction.sha256_hash(message + nonce)
+    #     if digest.startswith(prefix):
+    #         return nonce, i
+    #     i += 1
+
 def compute_total_fee(transactions):
     """Return the total fee for the set of transactions"""
     return sum(t.fee for t in transactions)
 
 
 class Block(object):
-    def __init__(self, transactions, ancestor, miner_address, skip_verif=False):
+    def __init__(self, transactions, ancestor, miner_address, timestamp, skip_verif=False):
         """
         Args:
             transactions: The list of transactions to include in the block
@@ -38,7 +39,9 @@ class Block(object):
                            incentive and the transactions fees will be deposited
         """
         reward = compute_total_fee(transactions) + BLOCK_INCENTIVE
-        self.transactions = [CoinbaseTransaction(miner_address, amount=reward)] + transactions
+        coinbase_transaction = CoinbaseTransaction()
+        # https://naivecoinstake.learn.uno/03-Transactions/
+        self.transactions = [coinbase_transaction, StakingTransaction(miner_address, amount=reward)] + transactions
         self.ancestor = ancestor
         
         if not skip_verif:

@@ -7,6 +7,10 @@ import numpy as np
 import pandas as pd
 import logging
 
+from wallet import *
+
+MINTING_REWARD = 20
+
 class TransactionInput(object):
     """
     An input for a transaction. This points to an output of another transaction
@@ -82,16 +86,32 @@ class Transaction(object):
     def hash(self):
         return self.sha256_hash(json.dumps(self.to_dict()))
 
-class CoinbaseTransaction:
+class CoinbaseTransaction(Transaction):
     """
     This is the first transaction: Empty and 0 reward
     """
+    def __init__(self, amount = 0):
+        self.inputs = []
+        self.outputs = []
+        self.fee = 0
+        self.signature = 'Coinbase'
+    
+    def to_dict(self, include_signature = False):
+        assert not include_signature, "Cannot include signature of coinbase transaction"
+        return super.to_dict(include_signature = False)
 
-class StakeTransaction:
+class StakingTransaction(Transaction):
     """
     This is the second transaction in PoS having 1 vin and atleast 2 vouts with first vout being empty
     """
-
+    def __init__(self, wallet, amount = MINTING_REWARD):
+        # assert len(inputs) >= 1, "Staking transaction requires atleast 1 input"
+        # assert len(outputs) >= 2, "Staking transaction requires atleast 2 outputs"
+        # assert outputs[0] is None, "Staking transaction requires 1st output to be empty"
+        # assert outputs[1].amount == 0, "Staking transaction requires 2nd output to be unspendable(data-only)"
+        # ABOVE SPECS WILL BE ADDED LATER TO IMPROVE SECURITY
+        self.inputs = []
+        self.outputs = [None, TransactionOutput(wallet, amount)]
 
 def compute_balance(wallet_address, transactions):
     """
@@ -120,7 +140,10 @@ def verify_transaction(transaction):
     if isinstance(transaction, CoinbaseTransaction):
         # TODO: We should probably be more careful about validating genesis transactions
         return True
-    
+    if isinstance(transaction, StakingTransaction):
+        if len(transaction.inputs) >= 1 or len(transaction.outputs) >= 2 or transaction.outputs[0] == "None" or transaction.outputs[1].amount == 0:
+            return False
+        return True
     # Verify input transactions
     for tx in transaction.inputs:
         if not verify_transaction(tx.transaction):
@@ -143,6 +166,5 @@ def verify_transaction(transaction):
     
     # Call compute_fee here to trigger an assert if output sum is great than input sum. Without this,
     # a miner could put such an invalid transaction.
-    compute_fee(transaction.inputs, transaction.outputs)
-    
+    compute_fee(transaction.inputs, transaction.outputs)    
     return True
