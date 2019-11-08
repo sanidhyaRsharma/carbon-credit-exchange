@@ -34,4 +34,16 @@ class Blockchain:
             #TODO send a request to all the nodes to add a transaction to their pool
             pass
 
-    # def resolve_conflicts(self,)
+    def broadcast_block(self, block):
+        neighbours = self.nodes
+        for node in neighbours:
+            #TODO send a request to all the nodes to verify and add a block to their chain
+            pass
+    
+    def resolve_conflicts(self):
+        neighbours = self.nodes
+        for node in neighbours:
+            #TODO compare lengths and replace current with longer chain(if found)
+            pass
+    
+    
