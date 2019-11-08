@@ -112,6 +112,12 @@ class StakingTransaction(Transaction):
         # ABOVE SPECS WILL BE ADDED LATER TO IMPROVE SECURITY
         self.inputs = []
         self.outputs = [None, TransactionOutput(wallet, amount)]
+        self.fee = 0
+        self.signature = 'Staking'
+
+    def to_dict(self, include_signature = False):
+        assert not include_signature, "Cannot include signature of genesis transaction"
+        return super.to_dict(include_signature = False)
 
 def compute_balance(wallet_address, transactions):
     """
