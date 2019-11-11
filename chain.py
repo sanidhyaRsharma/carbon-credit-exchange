@@ -3,7 +3,8 @@ from uuid import uuid4
 from urllib.parse import urlparse
 from transaction import *
 from block import *
-
+from flask import request, jsonify
+import requests
 class Blockchain:
     def __init__(self):
         self.transaction_pool = []
@@ -37,7 +38,7 @@ class Blockchain:
             #TODO send a request to all the nodes to add a transaction to their pool
             response=requests.post(f'http:/{node}/get_transaction',json={"transaction":transaction})
             #pass
-    def get_transaction():
+    def get_transaction(self):
         json=request.get_json()
         transaction=json.get("transaction")
         if verify_transaction(transaction):
@@ -50,34 +51,36 @@ class Blockchain:
             #TODO send a request to all the nodes to verify and add a block to their chain
             #pass
             
-    def get_block():
+    def get_block(self):
         json=request.get_json()
         block=json.get("block")
         if verify_block(block,self.genesis_block):
             last_block=self.last_block
             block.ancestor=last_block
             #self.chain.append(block)
-    def get_chain_length():
+    
+    def get_chain_length(self):
         length=self.chain_length
         response={"length":length}
         return jsonify(response),200
-    def get_last_block():
+
+    def get_last_block(self):
         last_block=self.last_block
         response={"last_block":last_block}
         return jsonify(response),200
     
     def resolve_conflicts(self):
         neighbours = self.nodes
-        max_length=self.chain_length
+        max_length= self.chain_length
         longest_chain_last_block=None
         for node in neighbours:
             response=requests.get(f'http:/{node}/get_chain_length')
             length=response.json()['length']
             if length>max_length:
                 node_response=response.get(f'http:/{node}/get_last_block')
-                longest_node_last_block=node_response.json()['last_block']
-        if longest_node_last_block is not None:
-            self.last_block=longest_node_last_block
+                longest_chain_last_block=node_response.json()['last_block']
+        if longest_chain_last_block is not None:
+            self.last_block=longest_chain_last_block
             #TODO compare lengths and replace current with longer chain(if found)
             #pass
     
