@@ -24,6 +24,9 @@ Please update .gitignore in case you or your IDE creates some unwanted folders/c
   - [ ] broadcast_transaction in chain.py
   - [ ] broadcast_block in chain.py
   - [ ] resolve_conflicts in chain.py
+  - [ ] Sharing Blockchain's transaction_pool
+  - [ ] Delete those transactions which have been added to a pool once the block is verified and added to the chain
+  - [ ] Make proof of stake run using kernel hash logic (using old transactions and granular timestamp instead of PoW style)
 - [ ] Buy credits page
 - [ ] Create credits page
 - [ ] Authentication
